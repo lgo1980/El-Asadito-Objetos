@@ -1,0 +1,40 @@
+import asadito.*
+
+describe "test para el punto 1" {
+
+	const persona1 = new Persona(posicion = 1, elementosCerca = [ "sal", "pimienta", "plato" ], criterio = sordo)
+	const persona2 = new Persona(posicion = 2, elementosCerca = [ ], criterio = sordo)
+
+	// const persona3 = new Persona(posicion = 2, elementosCerca = [ "sal", "pimienta", "plato", "sal" ], criterio = sordo)
+	test "La persona 1 por ser sorda alcanza el primer elemento que tiene cerca" {
+		persona1.pedirCosaA("mayonesa", persona2)
+		assert.equals("sal", persona2.elementosCerca().last())
+	}
+
+	test "La persona 1 para comer tranquilo pasa todos sus cosas que tiene cerca" {
+		persona1.criterio(comerTranquilo)
+		persona1.pedirCosaA("mayonesa", persona2)
+		assert.equals([ "sal", "pimienta", "plato" ], persona2.elementosCerca())
+	}
+	
+	test "La persona 1 cambia de posicion para hablar con otras personas" {
+		persona1.criterio(cambiarPosicion)
+		persona1.pedirCosaA("mayonesa", persona2)
+		assert.equals(1, persona2.posicion())
+	}
+	
+	test "La persona 1 le da el elemento deseado de la otra persona" {
+		persona1.criterio(elementoPedido)
+		persona1.pedirCosaA("sal", persona2)
+		assert.equals(["sal"], persona2.elementosCerca())
+	}
+	
+	test "La persona 1 no tiene el elemento deseado de la otra persona y no se lo da" {
+		persona1.criterio(elementoPedido)
+		persona1.pedirCosaA("salchicha", persona2)
+		assert.equals([], persona2.elementosCerca())
+	}
+	
+
+}
+
