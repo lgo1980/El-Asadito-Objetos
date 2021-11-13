@@ -2,8 +2,8 @@ import asadito.*
 
 describe "test para el punto 1" {
 
-	const persona1 = new Persona(posicion = 1, elementosCerca = [ "sal", "pimienta", "plato" ], criterio = sordo)
-	const persona2 = new Persona(posicion = 2, elementosCerca = [ ], criterio = sordo)
+	const persona1 = new Persona(posicion = 1, elementosCerca = [ "sal", "pimienta", "plato" ], criterio = sordo, criterioComida = vegetariano)
+	const persona2 = new Persona(posicion = 2, elementosCerca = [ ], criterio = sordo, criterioComida = vegetariano)
 
 	// const persona3 = new Persona(posicion = 2, elementosCerca = [ "sal", "pimienta", "plato", "sal" ], criterio = sordo)
 	test "La persona 1 por ser sorda alcanza el primer elemento que tiene cerca" {
@@ -16,25 +16,91 @@ describe "test para el punto 1" {
 		persona1.pedirCosaA("mayonesa", persona2)
 		assert.equals([ "sal", "pimienta", "plato" ], persona2.elementosCerca())
 	}
-	
+
 	test "La persona 1 cambia de posicion para hablar con otras personas" {
 		persona1.criterio(cambiarPosicion)
 		persona1.pedirCosaA("mayonesa", persona2)
 		assert.equals(1, persona2.posicion())
 	}
-	
+
 	test "La persona 1 le da el elemento deseado de la otra persona" {
 		persona1.criterio(elementoPedido)
 		persona1.pedirCosaA("sal", persona2)
-		assert.equals(["sal"], persona2.elementosCerca())
+		assert.equals([ "sal" ], persona2.elementosCerca())
 	}
-	
+
 	test "La persona 1 no tiene el elemento deseado de la otra persona y no se lo da" {
 		persona1.criterio(elementoPedido)
 		persona1.pedirCosaA("salchicha", persona2)
 		assert.equals([], persona2.elementosCerca())
 	}
-	
+
+}
+
+describe "test para el punto 2" {
+
+	const persona1 = new Persona(posicion = 1, elementosCerca = [ "sal", "pimienta", "plato" ], criterio = sordo, criterioComida = vegetariano)
+	const pechitoDeCerdo = new Bandeja(calorias = 270, esCarne = true, criterio = vegetariano)
+	const hamburguesaDeSoja = new Bandeja(calorias = 180, esCarne = false, criterio = vegetariano)
+
+	test "La persona 1 por ser vegetariano no come carne" {
+		persona1.comer(pechitoDeCerdo)
+		assert.notEquals([ pechitoDeCerdo ], persona1.loQueComio())
+	}
+
+	test "La persona 1 por ser vegetariano come hamburguesa de soja" {
+		persona1.comer(hamburguesaDeSoja)
+		assert.equals([ hamburguesaDeSoja ], persona1.loQueComio())
+	}
+
+}
+
+describe "test para el punto 3" {
+
+	const persona1 = new Persona(posicion = 1, elementosCerca = [ "sal", "pimienta", "plato" ], criterio = sordo, criterioComida = vegetariano)
+	const hamburguesaDeSoja = new Bandeja(calorias = 180, esCarne = false, criterio = vegetariano)
+	const hamburguesaDeSojaSuper = new Bandeja(calorias = 680, esCarne = false, criterio = vegetariano)
+
+	test "La persona 1 no es Pipon porque no comio nada con mas de 500 calorias" {
+		persona1.comer(hamburguesaDeSoja)
+		assert.notThat(persona1.esPipon())
+	}
+
+	test "La persona 1 por ser vegetariano come hamburguesa de soja" {
+		persona1.comer(hamburguesaDeSoja)
+		persona1.comer(hamburguesaDeSojaSuper)
+		assert.that(persona1.esPipon())
+	}
+
+}
+
+describe "test para el punto 4" {
+
+	const comensalOsky = new Persona(posicion = 1, elementosCerca = [ "sal", "pimienta", "plato" ], criterio = sordo, criterioComida = dietetico)
+	const comensalMoni = new Persona(posicion = "1@1", elementosCerca = [ "sal", "pimienta", "plato" ], criterio = sordo, criterioComida = dietetico)
+	const comensalFacu = new Persona(posicion = 1, elementosCerca = [ "sal", "pimienta", "plato" ], criterio = sordo, criterioComida = dietetico)
+	const comensalVero = new Persona(posicion = 1, elementosCerca = [ "sal", "pimienta", "plato" ], criterio = sordo, criterioComida = dietetico)
+	const pechitoDeCerdo = new Bandeja(calorias = 270, esCarne = true, criterio = vegetariano)
+
+	test "El comensal Osky siempre la pasa bien" {
+		comensalOsky.comer(pechitoDeCerdo)
+		assert.that(osky.laEstaPasandoBien(comensalOsky))
+	}
+
+	test "La comenzal Moni la pasa bien cuando se encuentra en la posicion 1@1" {
+		comensalMoni.comer(pechitoDeCerdo)
+		assert.that(moni.laEstaPasandoBien(comensalMoni))
+	}
+
+	test "La comenzal Facu la pasa bien cuando comio carne" {
+		comensalFacu.comer(pechitoDeCerdo)
+		assert.that(facu.laEstaPasandoBien(comensalFacu))
+	}
+
+	test "La comenzal Vero la pasa bien cuando tiene 3 o menos elementos" {
+		comensalVero.comer(pechitoDeCerdo)
+		assert.that(vero.laEstaPasandoBien(comensalVero))
+	}
 
 }
 
